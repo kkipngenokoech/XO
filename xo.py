@@ -27,6 +27,9 @@ class TicTacToe:
             if self.check_win():
                 messagebox.showinfo("Game Over", f"Player {self.player_turn} wins!")
                 self.window.quit()
+            elif self.check_tie():
+                messagebox.showinfo("Game Over", "It's a tie!")
+                self.window.quit()
             self.player_turn = "O" if self.player_turn == "X" else "X"
 
     def check_win(self):
@@ -41,6 +44,13 @@ class TicTacToe:
         if self.buttons[0][2]['text'] == self.buttons[1][1]['text'] == self.buttons[2][0]['text'] != "":
             return True
         return False
+
+    def check_tie(self):
+        for row in self.buttons:
+            for button in row:
+                if button['text'] == "":
+                    return False
+        return True
 
     def run(self):
         self.window.mainloop()
