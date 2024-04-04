@@ -1,76 +1,50 @@
-# Tic Tac Toe
+import tkinter as tk
+from tkinter import messagebox
 
-# The game board
-board = [' ' for _ in range(9)]
+class TicTacToe:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("Tic Tac Toe")
+        self.window.geometry("300x300")
+        self.player_turn = "X"
 
-# Function to draw the game board
-def draw_board():
-    row1 = '| {} | {} | {} |'.format(board[0], board[1], board[2])
-    row2 = '| {} | {} | {} |'.format(board[3], board[4], board[5])
-    row3 = '| {} | {} | {} |'.format(board[6], board[7], board[8])
+        self.buttons = []
+        for i in range(3):
+            row = []
+            for j in range(3):
+                button = tk.Button(self.window, text="", command=lambda row=i, column=j: self.click(row, column), height=3, width=6)
+                button.grid(row=i, column=j)
+                row.append(button)
+            self.buttons.append(row)
 
-    print(row1)
-    print(row2)
-    print(row3)
+    def click(self, row, column):
+        if self.buttons[row][column]['text'] == "":
+            self.buttons[row][column]['text'] = self.player_turn
+            if self.player_turn == "X":
+                self.buttons[row][column].config(foreground="blue", bg="white")
+            else:
+                self.buttons[row][column].config(foreground="red", bg="black")
+            if self.check_win():
+                messagebox.showinfo("Game Over", f"Player {self.player_turn} wins!")
+                self.window.quit()
+            self.player_turn = "O" if self.player_turn == "X" else "X"
 
-# Function to handle player move
-def player_move(icon):
-    if icon == 'X':
-        number = 1
-    elif icon == 'O':
-        number = 2
-
-    print("Your turn player {}".format(number))
-
-    while True:
-        try:
-            choice = int(input("Enter your move (1-9): ").strip())
-            if choice < 1 or choice > 9:
-                print("Invalid input. Please enter a number between 1 and 9.")
-                continue
-            if board[choice - 1] != ' ':
-                print("That space is taken!")
-                continue
-            board[choice - 1] = icon
-            break
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-
-# Function to check for a win
-def is_victory(icon):
-    if (board[0] == icon and board[1] == icon and board[2] == icon) or \
-        (board[3] == icon and board[4] == icon and board[5] == icon) or \
-        (board[6] == icon and board[7] == icon and board[8] == icon) or \
-        (board[0] == icon and board[3] == icon and board[6] == icon) or \
-        (board[1] == icon and board[4] == icon and board[7] == icon) or \
-        (board[2] == icon and board[5] == icon and board[8] == icon) or \
-        (board[0] == icon and board[4] == icon and board[8] == icon) or \
-        (board[2] == icon and board[4] == icon and board[6] == icon):
-        return True
-    else:
+    def check_win(self):
+        for row in self.buttons:
+            if row[0]['text'] == row[1]['text'] == row[2]['text'] != "":
+                return True
+        for column in range(3):
+            if self.buttons[0][column]['text'] == self.buttons[1][column]['text'] == self.buttons[2][column]['text'] != "":
+                return True
+        if self.buttons[0][0]['text'] == self.buttons[1][1]['text'] == self.buttons[2][2]['text'] != "":
+            return True
+        if self.buttons[0][2]['text'] == self.buttons[1][1]['text'] == self.buttons[2][0]['text'] != "":
+            return True
         return False
 
-# Function to check for a draw
-def is_draw():
-    if ' ' not in board:
-        return True
-    else:
-        return False
+    def run(self):
+        self.window.mainloop()
 
-# Main game loop
-while True:
-    draw_board()
-    player_move('X')
-    draw_board()
-    if is_victory('X'):
-        draw_board()  # Display the final state of the board
-        print("Player 1 Wins! Congratulations!")
-        break
-    elif is_draw():
-        print("It's a draw!")
-        break
-    player_move('O')
-    if is_victory('O'):
-        draw_board()  # Display the final state of the board
-        print("Player 2 Wins! Congratulations!")
-        break
+if __name__ == "__main__":
+    game = TicTacToe()
+    game.run()
